@@ -47,7 +47,7 @@ const handleLoadNews = async (categoryId) => {
               </div>
           </div>
           <div>
-              <button class="btn btn-primary">Buy Now</button>
+              <button onclick="handleModal('${news._id}')" class="btn btn-primary">Details</button>
           </div>
       </div>
         </div>
@@ -57,7 +57,35 @@ const handleLoadNews = async (categoryId) => {
     })
 
 }
+// trying modal
 
+const handleModal = async (newsId) => {
+    // console.log(newsId);
+    const response = await fetch(`https://openapi.programming-hero.com/api/news/${newsId}`)
+
+    const data = await response.json();
+    console.log(data.data[0]);
+
+    const modalContainer = document.getElementById('modal-container');
+    const div = document.createElement('div');
+    div.innerHTML = `
+    <dialog id="my_modal" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">Author name: ${data.data[0].author.name}</h3>
+        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button in form, it will close the modal -->
+                <button class="btn">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog>
+    `;
+    modalContainer.appendChild(div);
+    const modal = document.getElementById('my_modal');
+    modal.showModal();
+}
 
 
 
