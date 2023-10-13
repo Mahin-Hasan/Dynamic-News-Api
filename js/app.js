@@ -5,24 +5,64 @@ const handleCategory = async () => {
 
     const tabContainer = document.getElementById('tab-container');
     // for each only works in array to using data.data.news_category
-    
-    const trimedData = data.data.news_category.slice(0,3);
+
+    const trimedData = data.data.news_category.slice(0, 3);
     trimedData.forEach((category) => {
         console.log(category);
         const div = document.createElement('div');
         div.innerHTML = `
-        <a class="tab">${category.category_name}</a>
+        <a onclick="handleLoadNews('${category.category_id}')" class="tab">${category.category_name}</a>
         `;
         tabContainer.appendChild(div);
     });
+    // console.log(data.data.news_category);
+};
 
+// getting id dynamically
+const handleLoadNews = async (categoryId) => {
+    // console.log(categoryId);
+    const response = await fetch(`https://openapi.programming-hero.com/api/news/category/${categoryId}`)
+    const data = await response.json();
+    // console.log(data);
 
-
-    console.log(data.data.news_category);
+    const cardContainer = document.getElementById('news-container');
+    cardContainer.innerHTML = '';
+    // here optional chaining is used in case no data is loaded the code does not give any error
+    data.data?.forEach((news) => {
+        // console.log(news);
+        const div = document.createElement('div');
+        div.innerHTML = `
+        <div class="card w-96 bg-base-100 shadow-xl">
+            <figure><img src="${news?.image_url}" alt="Shoes" /></figure>
+            <div class="card-body">
+             <h2 class="card-title">${news.title.slice(0, 40)}</h2>
+             <p>${news.details.slice(0, 40)}</p>
+          <div class="badge badge-primary badge-outline">${news?.rating?.badge}</div>
+          <div class="flex justify-between">
+          <div class="flex items-center">
+              <img class="w-10 rounded-full mr-3" src="${news.author.img}" alt="">
+              <div>
+                <h4>${news.author.name}</h4>
+                <h4>${news.total_view ? news.total_view : 'No views'}</h4>
+              </div>
+          </div>
+          <div>
+              <button class="btn btn-primary">Buy Now</button>
+          </div>
+      </div>
+        </div>
+      </div>
+        `
+        cardContainer.appendChild(div);
+    })
 
 }
-handleCategory();
 
+
+
+
+handleCategory();
+handleLoadNews('01');
 
 
 
